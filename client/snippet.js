@@ -1,14 +1,12 @@
-let video = document.getElementsByTagName('video')[0]
+let ws = new WebSocket("wss://vzvlad.dev:8080/subscribe")
 
-let ws = new WebSocket("ws://localhost:8000/ws")
+let video = document.getElementsByTagName('video')[0]
 
 video.onplay = (event) => {
 	ws.send('play')
-	// event.preventDefault()
 }
 video.onpause = (event) => {
 	ws.send('pause')
-	// event.preventDefault()
 }
 
 ws.onmessage = (event) => {
@@ -17,5 +15,5 @@ ws.onmessage = (event) => {
 	else if (event.data === "pause")
 		video.pause()
 	else
-		console.log("Unknown command: " + event.data)
+		console.warn("Unknown command: " + event.data)
 }
