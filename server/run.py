@@ -1,8 +1,11 @@
 from typing import List, Dict
 import datetime
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Depends, Request, Response
+from fastapi.middleware.cors import CORSMiddleware
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 
 
 class ConnectionManager:
@@ -45,11 +48,35 @@ class ConnectionManager:
             await connection.send_text(message)
 
 
+limiter = Limiter(key_func=get_remote_address)
 app = FastAPI()
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 manager = ConnectionManager()
 
 
-@app.websocket("/subscribe")
+@app.post("/shared-video-control/play")
+@limiter.limit("1/second")
+async def play(request: Request):
+    await manager.broadcast("play")
+    return Response(status_code=201)
+
+
+@app.post("/shared-video-control/pause")
+@limiter.limit("1/second")
+async def pause(request: Request):
+    await manager.broadcast("pause")
+    return Response(status_code=201)
+
+
+@app.websocket("/shared-video-control/subscribe")
 async def websocket_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
     try:
