@@ -62,23 +62,10 @@ app.add_middleware(
 manager = ConnectionManager()
 
 
-@app.post("/play")
-@limiter.limit("1/second")
-async def play(request: Request):
-    await manager.broadcast("play")
-    return Response(status_code=201)
-
-
-@app.post("/pause")
-@limiter.limit("1/second")
-async def pause(request: Request):
-    await manager.broadcast("pause")
-    return Response(status_code=201)
-
-
 @app.websocket("/subscribe")
 async def websocket_endpoint(websocket: WebSocket):
     #TODO: Check, if there is the same WebSocket instance for all connections
+    print(web)
     await manager.connect(websocket)
     try:
         while True:
