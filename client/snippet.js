@@ -1,17 +1,17 @@
 var USE_FETCH = false
 
-let ws = new WebSocket("wss://vzvlad.dev:8080/shared-video-control/subscribe")
+let ws = new WebSocket("wss://api.vzvlad.dev/video-multiplayer/subscribe")
 let video = document.getElementsByTagName('video')[0]
 
 video.onplay = async (event) => {
 	if (USE_FETCH)
-		fetch('https://vzvlad.dev:8080/shared-video-control/play', {method: 'POST'})
+		fetch('https://api.vzvlad.dev/video-multiplayer/play', {method: 'POST'})
 	else
 		ws.send("play")
 }
 video.onpause = async (event) => {
 	if (USE_FETCH)
-		fetch('https://vzvlad.dev:8080/shared-video-control/pause', {method: 'POST'})
+		fetch('https://api.vzvlad.dev/video-multiplayer/pause', {method: 'POST'})
 	else
 		ws.send("pause")
 }
