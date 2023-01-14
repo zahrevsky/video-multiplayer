@@ -1,4 +1,4 @@
-### Video multiplayer — a JS snippet to sync video play-pause state<br><sup>Backed by syncronization server at vzvlad.dev<br/></sup>
+### Video multiplayer — a JS snippet to sync video play-pause state<br><sup>Backed by syncronization server at zahrevsky.com<br/></sup>
 
 Video multiplayer helps you watch a movie together remotely without screen-sharing. Each user opens the same web page with a video and inserts a JS snippet in the developer console. Now, when one user toggles play-pause, it toggles for everyone.
 
